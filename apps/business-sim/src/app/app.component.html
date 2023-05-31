@@ -1,2 +1,57 @@
-<business-sim-nx-welcome></business-sim-nx-welcome>
-<router-outlet></router-outlet>
+<div class="dashboard">
+  <div *ngIf="businesses$ | async as businesses" class="business-container">
+    <business-sim-business *ngFor="let business of businesses" [business]="business"></business-sim-business>
+  </div>
+  <div class="assets">
+    <div class="turn">
+      <button (click)="advance()">Next month</button>
+      <button (click)="advance(3)">Next quarter</button>
+      <button (click)="advance(6)">6 months</button>
+      <button (click)="advance(12)">1 year</button>
+      <button (click)="advance(60)">5 years</button>
+      <span style="padding-left: 2rem;">Current Turn: {{ turn }}(months) {{ turn / 12 | number}} (years)</span>
+      <span style="padding-left: 2rem;">Monthly Income: {{ monthlyIncome | currency }}</span>
+      <span style="padding-left: 2rem;">Yearly Income: {{ annualIncome | currency }}</span>
+      <span style="padding-left: 2rem;">Owned: {{ ownedBusinesses.length | number }}</span>
+      <span style="padding-left: 2rem;">Age: {{ (16 + (turn / 12)) | number }}</span>
+    </div>
+    <ng-container *ngIf="capital$ | async as capital; else nocapital">
+      <h3>Capital: {{ capital | currency }}</h3>
+    </ng-container>
+    <ng-container *ngIf="loans">
+      <h3>Loans:</h3>
+      <ng-container *ngIf="loans?.length; else noloans">
+        <div *ngFor="let loan of loans" style="margin-bottom: 2rem;">
+          <span>Amount: {{ loan.amount | currency }}</span><br>
+          <span>Balance: {{ loan.payment * loan.terms | currency }}</span><span style="padding-left: 1rem"
+            (click)="loanPayoff(loan)" *ngIf="(loan.payment * loan.terms) < capital">[Payoff]</span><br>
+          <span>Monthly Payment: {{ loan.payment | currency}}</span><br>
+          <span>Months remaining: {{ loan.terms }} months</span><br>
+          <span>Business: {{ loan.business.name }}</span>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="ownedBusinesses as owned">
+      <ng-container *ngIf="owned?.length; else nobusinesses">
+        <div class="business" *ngFor="let business of owned">
+          <p><strong>Name: </strong><span>{{ business.name }}</span><br>
+            <strong>Annual Cashflow: </strong><span>{{ calculateCashflow(business, true) | currency }}</span><br>
+            <strong>Monthly Cashflow: </strong><span>{{ calculateCashflow(business) | currency }}</span><br>
+            <strong *ngIf="business.loan">Loan: {{ business.loan.amount | currency }}</strong><span></span>
+            <strong *ngIf="!business.loan" (click)="sell(business)">Sell for {{ business.cashFlow * 2.25 | currency
+              }}</strong>
+          </p>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-template #nobusinesses>
+      <h3>You don't own any businesses</h3>
+    </ng-template>
+    <ng-template #nocapital>
+      <h3>You have no capital. Take out a loan?</h3>
+    </ng-template>
+    <ng-template #noloans>
+      <h3>You have no loans</h3>
+    </ng-template>
+  </div>
+</div>

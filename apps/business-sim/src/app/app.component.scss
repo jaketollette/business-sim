@@ -1,0 +1,28 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 1200px;
+}
+.business-container {
+  display: flex;
+  flex-direction: column;
+  order: 2;
+  width: 500px;
+  overflow: auto;
+  > * {
+    margin-bottom: 2rem;
+  }
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-height: 0;
+}
+
+.assets {
+  flex: 1;
+  overflow: auto;
+}

@@ -1,0 +1,422 @@
+[
+  {
+    "name": "Comedy Profits and Absentee Ownership",
+    "location": "Tulsa, OK",
+    "price": 285000,
+    "cashFlow": 121000,
+    "revenue": 713000,
+    "rent": null,
+    "ebitda": null,
+    "ffe": {
+      "value": 50000,
+      "included": true
+    },
+    "established": null,
+    "inventory": {
+      "value": 6000,
+      "included": true
+    },
+    "employees": null,
+    "absentee": true
+  },
+  {
+    "name": "Establish High Traffic Check Cashing Location with Bill Pay and Loans",
+    "location": "Tulsa, OK",
+    "price": 270000,
+    "cashFlow": 87069,
+    "revenue": 223202,
+    "rent": 2446.25,
+    "ebitda": null,
+    "ffe": {
+      "value": 5000,
+      "included": true
+    },
+    "established": 1990,
+    "inventory": {
+      "value": 46268,
+      "included": true
+    },
+    "employees": 2,
+    "absentee": true
+  },
+  {
+    "name": "Great Location high volume",
+    "location": "Charlotte, NC",
+    "price": 225000,
+    "cashFlow": 150000,
+    "revenue": 18000000,
+    "rent": 5000,
+    "ebitda": 150000,
+    "ffe": {
+      "value": 50000,
+      "included": true
+    },
+    "established": 1960,
+    "inventory": {
+      "value": 85000,
+      "included": false
+    },
+    "employees": 3,
+    "absentee": true
+  },
+  {
+    "name": "Barbecue Franchise For Sale - $51K Owner Earnings",
+    "location": "Charlotte, NC",
+    "price": 100000,
+    "cashFlow": 51000,
+    "revenue": 580000,
+    "rent": 5768,
+    "ebitda": null,
+    "ffe": {
+      "value": 180000,
+      "included": true
+    },
+    "established": 2015,
+    "inventory": {
+      "value": 5000,
+      "included": false
+    },
+    "employees": 6,
+    "absentee": true
+  },
+  {
+    "name": "$72,000 NET Absentee-Run Smoke Shop w/a Great Lease",
+    "location": "Phoenix, AZ",
+    "price": 100000,
+    "cashFlow": 72000,
+    "revenue": 180000,
+    "rent": 1179,
+    "ebitda": null,
+    "ffe": {
+      "value": 35000,
+      "included": true
+    },
+    "established": null,
+    "inventory": {
+      "value": 50000,
+      "included": true
+    },
+    "employees": 1,
+    "absentee": true
+  },
+  {
+    "name": "Snack Food Business for Sale",
+    "location": "Meridian, MS",
+    "price": 100000,
+    "cashFlow": 70000,
+    "revenue": 210000,
+    "rent": 1179,
+    "ebitda": null,
+    "ffe": {
+      "value": 15000,
+      "included": true
+    },
+    "established": null,
+    "inventory": {
+      "value": 4000,
+      "included": false
+    },
+    "employees": 4,
+    "absentee": true
+  },
+  {
+    "name": "smoke shop well Established high volume sale great location",
+    "location": "Modesto, CA",
+    "price": 100000,
+    "cashFlow": 240000,
+    "revenue": 500000,
+    "rent": 3400,
+    "ebitda": null,
+    "ffe": {
+      "value": 0,
+      "included": false
+    },
+    "established": 2022,
+    "inventory": {
+      "value": 0,
+      "included": false
+    },
+    "employees": 3,
+    "absentee": true
+  },
+  {
+    "name": "Recession Resistant, Automotive Franchise in Highlands Ranch, CO",
+    "location": "Littleton, CO",
+    "price": 100000,
+    "cashFlow": 121000,
+    "revenue": 576000,
+    "rent": 6200,
+    "ebitda": 121000,
+    "ffe": {
+      "value": 0,
+      "included": false
+    },
+    "established": 1990,
+    "inventory": {
+      "value": 0,
+      "included": false
+    },
+    "employees": 7,
+    "absentee": true
+  },
+  {
+    "name": "Dairy Queen",
+    "location": "Cross City, FL",
+    "price": 300000,
+    "cashFlow": 121000,
+    "revenue": 987000,
+    "rent": 6000,
+    "ebitda": 121000,
+    "ffe": {
+      "value": 1,
+      "included": false
+    },
+    "established": 1994,
+    "inventory": {
+      "value": 25000,
+      "included": false
+    },
+    "employees": 17,
+    "absentee": true
+  },
+  {
+    "name": "Thriving Chiropractic Center",
+    "location": "Wilmington, NC",
+    "price": 500000,
+    "cashFlow": 268000,
+    "revenue": 647000,
+    "rent": 4000,
+    "ebitda": null,
+    "ffe": {
+      "value": 0,
+      "included": false
+    },
+    "established": 2017,
+    "inventory": {
+      "value": 0,
+      "included": false
+    },
+    "employees": 2,
+    "absentee": true
+  },
+  {
+    "name": "Established, Profitable Spa Ready for New Owners",
+    "location": "Hillsboro, OR",
+    "price": 500000,
+    "cashFlow": 183950,
+    "revenue": 662328,
+    "rent": 4500,
+    "ebitda": null,
+    "ffe": {
+      "value": 25000,
+      "included": true
+    },
+    "established": 2019,
+    "inventory": {
+      "value": 0,
+      "included": false
+    },
+    "employees": 6,
+    "absentee": true
+  },
+  {
+    "name": "Absentee operation Wing & seafood togo restaurant for sale",
+    "location": "Mcdonough, GA",
+    "price": 500000,
+    "cashFlow": 240000,
+    "revenue": 1080000,
+    "rent": 0,
+    "ebitda": null,
+    "ffe": {
+      "value": 0,
+      "included": true
+    },
+    "established": null,
+    "inventory": {
+      "value": 0,
+      "included": false
+    },
+    "employees": 0,
+    "absentee": true
+  },
+  {
+    "name": "Premier Bar/Restaurant/Catering Business in Philadelphia",
+    "location": "Mcdonough, GA",
+    "price": 3000000,
+    "cashFlow": 850000,
+    "revenue": 2900000,
+    "rent": 15000,
+    "ebitda": 1222000,
+    "ffe": {
+      "value": 275000,
+      "included": true
+    },
+    "established": 2000,
+    "inventory": {
+      "value": 35000,
+      "included": false
+    },
+    "employees": 20,
+    "absentee": true
+  },
+  {
+    "name": "Cannabis Grow Facility- Passive Ownership",
+    "location": "Seattle, WA",
+    "price": 3000000,
+    "cashFlow": 1580000,
+    "revenue": 2200000,
+    "rent": 6250,
+    "ebitda": 1457000,
+    "ffe": {
+      "value": 1000000,
+      "included": true
+    },
+    "established": 2020,
+    "inventory": {
+      "value": 480000,
+      "included": false
+    },
+    "employees": 6,
+    "absentee": true
+  },
+  {
+    "name": "Car Rental Business, multiple locations",
+    "location": "Mcdonough, GA",
+    "price": 3000000,
+    "cashFlow": 750000,
+    "revenue": 2500000,
+    "rent": 0,
+    "ebitda": null,
+    "ffe": {
+      "value": 1030000,
+      "included": true
+    },
+    "established": 2015,
+    "inventory": {
+      "value": 4000,
+      "included": true
+    },
+    "employees": 10,
+    "absentee": true
+  },
+  {
+    "name": "Growing Transportation and Logistics Company",
+    "location": "New York, NY",
+    "price": 10000000,
+    "cashFlow": 2309000,
+    "revenue": 7477206,
+    "rent": 0,
+    "ebitda": null,
+    "ffe": {
+      "value": 0,
+      "included": true
+    },
+    "established": 2015,
+    "inventory": {
+      "value": 0,
+      "included": true
+    },
+    "employees": 10,
+    "absentee": true
+  },
+  {
+    "name": "A High Performing Express Car Wash",
+    "location": "Chelan County, WA",
+    "price": 10550000,
+    "cashFlow": 917000,
+    "revenue": 1530515,
+    "rent": 0,
+    "ebitda": 917000,
+    "ffe": {
+      "value": 1150000,
+      "included": true
+    },
+    "established": 2013,
+    "inventory": {
+      "value": 10000,
+      "included": true
+    },
+    "employees": 4,
+    "absentee": true
+  },
+  {
+    "name": "Business To Business, management in place, easy to understand.",
+    "location": "Atlanta, GA",
+    "price": 15750000,
+    "cashFlow": 3328000,
+    "revenue": 29400000,
+    "rent": 0,
+    "ebitda": 1400000,
+    "ffe": {
+      "value": 550000,
+      "included": true
+    },
+    "established": 2000,
+    "inventory": {
+      "value": 1200000,
+      "included": false
+    },
+    "employees": 30,
+    "absentee": true
+  },
+  {
+    "name": "Profitable Oil Field Services Company",
+    "location": "Williams County, ND",
+    "price": 11000000,
+    "cashFlow": 2172000,
+    "revenue": 4000000,
+    "rent": 1875,
+    "ebitda": 2047000,
+    "ffe": {
+      "value": 5000000,
+      "included": true
+    },
+    "established": 2000,
+    "inventory": {
+      "value": 5000000,
+      "included": true
+    },
+    "employees": 2,
+    "absentee": true
+  },
+  {
+    "name": "14 Yr. Absent-Owned Excavating, Dirt Hauling. $12M in Assets Debt Free",
+    "location": "Denver, CO",
+    "price": 13500000,
+    "cashFlow": 4500000,
+    "revenue": 15500000,
+    "rent": 0,
+    "ebitda": 2047000,
+    "ffe": {
+      "value": 12000000,
+      "included": true
+    },
+    "established": 2006,
+    "inventory": {
+      "value": 300000,
+      "included": true
+    },
+    "employees": 33,
+    "absentee": true
+  },
+  {
+    "name": "Rapidly-Growing Health & Wellness Brand",
+    "location": "California",
+    "price": 30000000,
+    "cashFlow": 11103694,
+    "revenue": 37826886,
+    "rent": 0,
+    "ebitda": null,
+    "ffe": {
+      "value": null,
+      "included": true
+    },
+    "established": 2019,
+    "inventory": {
+      "value": 440000,
+      "included": false
+    },
+    "employees": 10,
+    "absentee": true
+  }
+]
