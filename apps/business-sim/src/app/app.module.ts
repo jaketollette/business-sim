@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { appRoutes } from './app.routes';
 import { BusinessComponent } from './business/business.component';
+import { LoanService } from './loan/services/loan.service';
 import { TurnService } from './services/turn.service';
 import { TransactionStore } from './store/transaction.store';
 
@@ -15,7 +16,7 @@ import { TransactionStore } from './store/transaction.store';
     HttpClientModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
   ],
-  providers: [HttpClient, TransactionStore, TurnService],
+  providers: [HttpClient, TransactionStore, TurnService, LoanService],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

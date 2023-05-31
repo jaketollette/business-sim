@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Business } from "../interfaces/business.interface";
-import { Loan } from "../interfaces/loan.interface";
+import { Loan } from "../loan/interfaces/loan.interface";
 import { TransactionStore } from "../store/transaction.store";
 
 @Injectable({
@@ -29,7 +29,7 @@ export class TurnService {
   private updateCapital(businesses: Business[]): void {
     const totalIncome = businesses.reduce((previous, current) => {
       if (current.loan) {
-        return previous + ((current.cashFlow / 12) - current.loan.payment)
+        return previous + ((current.cashFlow / 12) - current.loan?.payments[0].totalPayment)
       }
       return previous + (current.cashFlow / 12)
     }, 0);
@@ -40,10 +40,10 @@ export class TurnService {
 
   private updateLoans(loans: Loan[]): void {
     loans.forEach(l => {
-      if (l.terms <= 0) {
+      if (l.years <= 0) {
         this.store.removeLoan(l);
       } else {
-        this.store.payLoans({ amount: l.amount, loan: l });
+        this.store.payLoans(l);
       }
     });
   }

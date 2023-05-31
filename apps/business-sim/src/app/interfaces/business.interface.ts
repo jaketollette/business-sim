@@ -1,4 +1,4 @@
-import { Loan } from "./loan.interface";
+import { Loan } from "../loan/interfaces/loan.interface";
 
 export interface Business {
   id: string;

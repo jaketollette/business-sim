@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject, skip, takeUntil } from 'rxjs';
 import { Business } from './interfaces/business.interface';
-import { Loan } from './interfaces/loan.interface';
+import { Loan } from './loan/interfaces/loan.interface';
+import { LoanService } from './loan/services/loan.service';
 import { TurnService } from './services/turn.service';
 import { TransactionStore } from './store/transaction.store';
 
@@ -28,7 +29,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly store: TransactionStore,
-    private readonly turnService: TurnService
+    private readonly turnService: TurnService,
+    private readonly loanService: LoanService,
   ) {
   }
 
@@ -69,7 +71,15 @@ export class AppComponent implements OnInit, OnDestroy {
         //   this.store.fetchAllBusinesses();
         // }
       }
+    });
+
+    const loan = this.loanService.createLoan({
+      amount: 100_000,
+      downPayment: 10_000,
+      interest: 7.75,
+      years: 10
     })
+    console.log('loan', loan);
   }
 
   ngOnDestroy(): void {
@@ -80,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private calculateMonthlyIncome(business: Business[]): number {
     const total = business.reduce((prev, current) => {
       if (current.loan) {
-        return prev + ((current.cashFlow / 12) - current.loan.payment)
+        return prev + ((current.cashFlow / 12) - current.loan?.payments[0].totalPayment)
       }
       return prev + (current.cashFlow / 12)
     }, 0);
@@ -91,12 +101,12 @@ export class AppComponent implements OnInit, OnDestroy {
   public calculateCashflow(business: Business, annual = false): number {
     if (annual) {
       if (business.loan) {
-        return business.cashFlow - (business.loan.payment * 12)
+        return business.cashFlow - (business.loan.payments[0].totalPayment * 12)
       }
       return business.cashFlow;
     }
     if (business.loan) {
-      return (business.cashFlow / 12) - business.loan.payment;
+      return (business.cashFlow / 12) - business.loan.payments[0].totalPayment;
     }
 
     return business.cashFlow / 12;
@@ -114,7 +124,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   loanPayoff(loan: Loan): void {
-    const cost = loan.payment * loan.terms;
+    const cost = loan.payments[0].principalRemaining + loan.payments[0].interestPayment;
     const canPay = this.capital > cost;
     if (canPay) {
       this.store.increaseCapital(-1 * cost);

@@ -4,7 +4,10 @@ import { ComponentStore, tapResponse } from "@ngrx/component-store";
 import { Observable, map, switchMap } from "rxjs";
 import { v4 as uuidv4 } from 'uuid';
 import { Business } from "../interfaces/business.interface";
-import { Loan, LoanPayment, LoanRequest } from "../interfaces/loan.interface";
+import { LoanRequest } from "../interfaces/loan.interface";
+import { Loan } from "../loan/interfaces/loan.interface";
+import { CalculatorService } from "../loan/services/calculator.service";
+import { LoanService } from "../loan/services/loan.service";
 
 interface TransactionState {
   capital: number;
@@ -25,7 +28,7 @@ export class TransactionStore extends ComponentStore<TransactionState> {
   public readonly fetchAllBusinesses = this.effect((_: Observable<void>) =>
     _.pipe(
       switchMap(() => this.http.get<Business[]>('api/business').pipe(
-        map(businesses => businesses.sort((a, b) => a.price > b.price ? -1 : 1).map(b => {
+        map(businesses => businesses.sort((a, b) => a.price > b.price ? 1 : -1).map(b => {
           b.id = b.id = uuidv4();
           return b;
         }))
@@ -44,14 +47,14 @@ export class TransactionStore extends ComponentStore<TransactionState> {
         (loan) => {
           const currentLoans = this.get().loans;
           const business = { ...loan.business }
-          const newLoan = {
+          let newLoan = this.loanService.createLoan({
             amount: loan.amount,
-            balance: loan.amount,
-            interestRate: 7.75,
-            payment: (((loan.amount + (loan.amount * 0.440128)) / 10) / 12),
-            terms: (10 * 12),
+            downPayment: loan.downPayment,
+            interest: 7.75,
+            years: 10,
             business
-          }
+          });
+          newLoan = this.calculator.calculate(newLoan);
           currentLoans.push(newLoan);
           let currentCapital = this.get().capital;
           currentCapital += (loan.amount);
@@ -120,18 +123,17 @@ export class TransactionStore extends ComponentStore<TransactionState> {
       )
     ));
 
-  public readonly payLoans = this.effect((payment: Observable<LoanPayment>) =>
+  public readonly payLoans = this.effect((payment: Observable<Loan>) =>
     payment.pipe(
       tapResponse(
-        (payment: LoanPayment) => {
+        (loan: Loan) => {
           const loans = this.get().loans;
-          const loanToPay = loans.find(l => l.business.id === payment.loan.business.id);
+          const loanToPay = loans.find(l => l.business?.id === loan.business?.id);
           if (loanToPay) {
-            const updateLoans = loans.filter(loan => loan.terms > 0).map(l => {
-              if (l.business.id === payment.loan.business.id) {
+            const updateLoans = loans.filter(loan => loan.years > 0).map(l => {
+              if (l.business?.id === loan.business?.id) {
                 //update balance
-                l.balance -= payment.amount;
-                l.terms -= 1;
+                l.payments.shift();
               }
               return l
             });
@@ -148,10 +150,10 @@ export class TransactionStore extends ComponentStore<TransactionState> {
         (loan: Loan) => {
           const currentLoans = this.get().loans;
           const currentBusinesses = this.get().businesses;
-          const filtered = currentLoans.filter(existing => loan.business.id !== existing.business.id);
-          let businessWithLoan = currentBusinesses.find(business => loan.business.id === business.id);
+          const filtered = currentLoans.filter(existing => loan.business?.id !== existing.business?.id);
+          let businessWithLoan = currentBusinesses.find(business => loan.business?.id === business.id);
           if (businessWithLoan) {
-            const updated = currentBusinesses.filter(business => loan.business.id !== business.id);
+            const updated = currentBusinesses.filter(business => loan.business?.id !== business.id);
             businessWithLoan = { ...businessWithLoan, loan: undefined }
             updated.push(businessWithLoan);
             this.updateBusinesses(updated);
@@ -182,7 +184,11 @@ export class TransactionStore extends ComponentStore<TransactionState> {
     allBusinesses
   }));
 
-  constructor(private readonly http: HttpClient) {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly calculator: CalculatorService,
+    private readonly loanService: LoanService
+  ) {
     super({
       businesses: [],
       capital: 11000,

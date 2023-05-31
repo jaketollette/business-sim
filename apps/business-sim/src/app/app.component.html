@@ -18,29 +18,54 @@
     <ng-container *ngIf="capital$ | async as capital; else nocapital">
       <h3>Capital: {{ capital | currency }}</h3>
     </ng-container>
-    <ng-container *ngIf="loans">
-      <h3>Loans:</h3>
-      <ng-container *ngIf="loans?.length; else noloans">
-        <div *ngFor="let loan of loans" style="margin-bottom: 2rem;">
-          <span>Amount: {{ loan.amount | currency }}</span><br>
-          <span>Balance: {{ loan.payment * loan.terms | currency }}</span><span style="padding-left: 1rem"
-            (click)="loanPayoff(loan)" *ngIf="(loan.payment * loan.terms) < capital">[Payoff]</span><br>
-          <span>Monthly Payment: {{ loan.payment | currency}}</span><br>
-          <span>Months remaining: {{ loan.terms }} months</span><br>
-          <span>Business: {{ loan.business.name }}</span>
-        </div>
-      </ng-container>
-    </ng-container>
     <ng-container *ngIf="ownedBusinesses as owned">
       <ng-container *ngIf="owned?.length; else nobusinesses">
         <div class="business" *ngFor="let business of owned">
-          <p><strong>Name: </strong><span>{{ business.name }}</span><br>
+          <div>
+            <h3>Business</h3>
+            <strong>Name: </strong><span>{{ business.name | titlecase }}</span><br>
             <strong>Annual Cashflow: </strong><span>{{ calculateCashflow(business, true) | currency }}</span><br>
             <strong>Monthly Cashflow: </strong><span>{{ calculateCashflow(business) | currency }}</span><br>
-            <strong *ngIf="business.loan">Loan: {{ business.loan.amount | currency }}</strong><span></span>
             <strong *ngIf="!business.loan" (click)="sell(business)">Sell for {{ business.cashFlow * 2.25 | currency
               }}</strong>
-          </p>
+          </div>
+          <ng-container *ngIf="business.loan">
+            <div>
+              <h3>Loan
+                <span (click)="loanPayoff(business.loan)"
+                  *ngIf="business.loan.payments[0].principalRemaining + business.loan.payments[0].interestPayment < capital"
+                  title="{{business.loan.payments[0].principalRemaining + business.loan.payments[0].interestPayment | currency }}">
+                  [Payoff] - {{ business.loan.payments[0].principalRemaining + business.loan.payments[0].interestPayment
+                  | currency }}
+                </span>
+              </h3>
+              <strong>Payment:</strong> {{ business.loan.payments[0].totalPayment | currency }}<br>
+              <strong>Principal:</strong> {{ business.loan.payments[0].principalRemaining | currency }}<br>
+              <strong>Interest Paid:</strong> {{ business.loan.payments[0].interestCumulative | currency }}<br>
+              <strong>Payments Left:</strong> {{ business.loan.payments.length | number }}
+              <table>
+                <caption><strong>Schedule</strong></caption>
+                <thead>
+                  <tr>
+                    <th>Payment #</th>
+                    <th>Paid to Interest</th>
+                    <th>Paid to Principal</th>
+                    <th>Current Balance</th>
+                    <th>Total Interest</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let payment of business.loan.payments">
+                    <td>{{ payment.id }}</td>
+                    <td>{{ payment.interestPayment | currency }}</td>
+                    <td>{{ payment.principalPayment | currency }}</td>
+                    <td>{{ payment.principalRemaining | currency }}</td>
+                    <td>{{ payment.interestCumulative | currency }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
         </div>
       </ng-container>
     </ng-container>
@@ -49,9 +74,6 @@
     </ng-template>
     <ng-template #nocapital>
       <h3>You have no capital. Take out a loan?</h3>
-    </ng-template>
-    <ng-template #noloans>
-      <h3>You have no loans</h3>
     </ng-template>
   </div>
 </div>
