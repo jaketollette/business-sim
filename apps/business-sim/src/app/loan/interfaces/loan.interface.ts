@@ -26,3 +26,14 @@ export interface LoanPaymentTotal {
   principal: number;
   total: number;
 }
+
+
+export interface NewLoanDialogConfig {
+  business: Business;
+  currentCapital: number;
+  totalAmount: number;
+}
+
+export interface LoanScheduleDialogConfig {
+  business: Business;
+}

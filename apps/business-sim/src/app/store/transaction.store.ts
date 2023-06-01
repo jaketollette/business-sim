@@ -14,6 +14,8 @@ interface TransactionState {
   loans: Loan[];
   businesses: Business[];
   allBusinesses: Business[];
+  managers: number;
+  maxBusinesses: number;
 }
 
 @Injectable({
@@ -24,6 +26,7 @@ export class TransactionStore extends ComponentStore<TransactionState> {
   public readonly loans$ = this.select(s => s.loans);
   public readonly businesses$ = this.select(s => s.businesses);
   public readonly allBusinesses$ = this.select(s => s.allBusinesses);
+  public readonly managers$ = this.select(s => s.managers);
 
   public readonly fetchAllBusinesses = this.effect((_: Observable<void>) =>
     _.pipe(
@@ -76,13 +79,22 @@ export class TransactionStore extends ComponentStore<TransactionState> {
       map(business => business),
       tapResponse(
         (business) => {
+          business.totalProfit = 0;
+          business.monthsOwned = 0;
           const currentBusinesses = this.get().businesses;
-          if (currentBusinesses.length < 10) {
+          const maxBusinesses = this.get().maxBusinesses;
+
+          if (currentBusinesses.length < maxBusinesses) {
             currentBusinesses.push(business);
             const allBusinesses = this.get().allBusinesses;
             const filteredBusinesses = allBusinesses.filter(b => b.id !== business.id);
             const currentCapital = this.get().capital;
             let newCapital = currentCapital - business.price;
+            if (business.loan) {
+              business.totalProfit -= business.loan.total.principal;
+            } else {
+              business.totalProfit -= business.price;
+            }
             if (business.inventory.value && !business.inventory.included) {
               newCapital -= business.inventory.value;
             }
@@ -114,9 +126,12 @@ export class TransactionStore extends ComponentStore<TransactionState> {
     amount.pipe(
       tapResponse(
         (amount) => {
+          const managers = this.get().managers;
+          if (managers > 0) {
+            amount -= managers * (140000 / 12);
+          }
           let currentCapital = this.get().capital;
           currentCapital += amount;
-          console.log('amount and capital', amount, currentCapital);
           this.updateCapital(currentCapital);
         },
         (err) => console.error(err)
@@ -130,14 +145,21 @@ export class TransactionStore extends ComponentStore<TransactionState> {
           const loans = this.get().loans;
           const loanToPay = loans.find(l => l.business?.id === loan.business?.id);
           if (loanToPay) {
-            const updateLoans = loans.filter(loan => loan.years > 0).map(l => {
+            const updateLoans = loans.filter(loan => loan.payments.length > 0).map(l => {
               if (l.business?.id === loan.business?.id) {
                 //update balance
-                l.payments.shift();
+                if (l.payments.length) {
+                  l.payments.shift();
+                }
               }
-              return l
+              return l;
             });
-            this.updateLoans(updateLoans);
+            loans.filter(loan => loan.payments?.length === 0).map(l => {
+              this.removeLoan(l);
+            });
+
+            const filtered = updateLoans.filter(loan => loan.payments?.length);
+            this.updateLoans(filtered);
           }
         },
         (err) => console.error(err)
@@ -164,6 +186,18 @@ export class TransactionStore extends ComponentStore<TransactionState> {
       )
     ));
 
+  public readonly hireManager = this.effect((_: Observable<void>) =>
+    _.pipe(
+      tapResponse(
+        () => {
+          this.updateManagers(this.get().managers++);
+          this.updateMax(this.get().maxBusinesses += 5);
+          console.log('maxBusinesses', this.get().maxBusinesses);
+        },
+        (err) => console.error(err)
+      )
+    ))
+
   public readonly updateBusinesses = this.updater((state, businesses: Business[]) => ({
     ...state,
     businesses
@@ -184,6 +218,16 @@ export class TransactionStore extends ComponentStore<TransactionState> {
     allBusinesses
   }));
 
+  private readonly updateManagers = this.updater((state, manager: number) => ({
+    ...state,
+    manager
+  }));
+
+  private readonly updateMax = this.updater((state, maxBusinesses: number) => ({
+    ...state,
+    maxBusinesses
+  }));
+
   constructor(
     private readonly http: HttpClient,
     private readonly calculator: CalculatorService,
@@ -191,9 +235,11 @@ export class TransactionStore extends ComponentStore<TransactionState> {
   ) {
     super({
       businesses: [],
-      capital: 11000,
+      capital: 20000,
       loans: [],
-      allBusinesses: []
+      allBusinesses: [],
+      managers: 0,
+      maxBusinesses: 5
     })
   }
 }

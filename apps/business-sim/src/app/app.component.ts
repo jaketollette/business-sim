@@ -1,8 +1,11 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ConfirmationService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { Observable, Subject, skip, takeUntil } from 'rxjs';
 import { Business } from './interfaces/business.interface';
+import { LoanScheduleDialogComponent } from './loan/components/loan-schedule-dialog/loan-schedule-dialog.component';
 import { Loan } from './loan/interfaces/loan.interface';
-import { LoanService } from './loan/services/loan.service';
 import { TurnService } from './services/turn.service';
 import { TransactionStore } from './store/transaction.store';
 
@@ -24,13 +27,16 @@ export class AppComponent implements OnInit, OnDestroy {
   capital = 0;
   monthlyIncome = 0;
   annualIncome = 0;
+  managers = 0;
 
   destroy$: Subject<void> = new Subject<void>;
 
   constructor(
     private readonly store: TransactionStore,
     private readonly turnService: TurnService,
-    private readonly loanService: LoanService,
+    private readonly dialog: DialogService,
+    private readonly confirmationService: ConfirmationService,
+    private readonly currencyPipe: CurrencyPipe
   ) {
   }
 
@@ -61,25 +67,20 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.store.managers$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (managers) => this.managers = managers
+    })
+
     this.store.allBusinesses$.pipe(
       skip(1),
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (businesses) => {
+      next: () => {
         this.calculateMonthlyIncome(this.ownedBusinesses);
-        // if (!businesses.length) {
-        //   this.store.fetchAllBusinesses();
-        // }
       }
     });
-
-    const loan = this.loanService.createLoan({
-      amount: 100_000,
-      downPayment: 10_000,
-      interest: 7.75,
-      years: 10
-    })
-    console.log('loan', loan);
   }
 
   ngOnDestroy(): void {
@@ -89,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private calculateMonthlyIncome(business: Business[]): number {
     const total = business.reduce((prev, current) => {
-      if (current.loan) {
+      if (current.loan?.payments?.length) {
         return prev + ((current.cashFlow / 12) - current.loan?.payments[0].totalPayment)
       }
       return prev + (current.cashFlow / 12)
@@ -100,12 +101,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public calculateCashflow(business: Business, annual = false): number {
     if (annual) {
-      if (business.loan) {
+      if (business.loan?.payments?.length) {
         return business.cashFlow - (business.loan.payments[0].totalPayment * 12)
       }
       return business.cashFlow;
     }
-    if (business.loan) {
+    if (business.loan?.payments?.length) {
       return (business.cashFlow / 12) - business.loan.payments[0].totalPayment;
     }
 
@@ -120,15 +121,42 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   sell(business: Business): void {
-    this.store.sellBusiness(business);
+    const salePrice = business.cashFlow * 1.25;
+    const message = `Are you sure you want to sell this business for ${this.currencyPipe.transform(salePrice)}?`;
+    this.confirmationService.confirm({
+      message,
+      header: 'Please Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => this.store.sellBusiness(business)
+    });
   }
 
   loanPayoff(loan: Loan): void {
     const cost = loan.payments[0].principalRemaining + loan.payments[0].interestPayment;
     const canPay = this.capital > cost;
     if (canPay) {
-      this.store.increaseCapital(-1 * cost);
-      this.store.removeLoan(loan);
+      this.confirmationService.confirm({
+        message: `Pay ${this.currencyPipe.transform(cost)} to close loan?`,
+        header: 'Loan Payoff',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.store.increaseCapital(-1 * cost);
+          this.store.removeLoan(loan);
+        }
+      })
     }
+  }
+
+  hireManager(): void {
+    this.store.hireManager();
+  }
+
+  viewSchedule(business: Business): void {
+    this.dialog.open(LoanScheduleDialogComponent, {
+      header: 'Schedule',
+      data: {
+        business
+      }
+    })
   }
 }

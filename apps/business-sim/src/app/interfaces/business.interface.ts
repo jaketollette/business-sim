@@ -15,6 +15,8 @@ export interface Business {
   employees: number;
   absentee: boolean;
   loan?: Loan;
+  totalProfit: number;
+  monthsOwned: number;
 }
 
 export interface Inventory {

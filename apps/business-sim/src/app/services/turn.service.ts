@@ -16,19 +16,23 @@ export class TurnService {
 
   private businessGrowth(businesses: Business[], monthly = true): void {
     this.store.updateBusinesses(businesses.map(b => {
+      let profit = b.cashFlow;
       let rate = this.randomPercentage(7, 25);
       if (monthly) {
         rate /= 12;
+        profit = b.cashFlow / 12;
+        b.monthsOwned++
       }
       b.cashFlow = (b.cashFlow * rate) + b.cashFlow;
       b.revenue = (b.revenue * rate) + b.revenue;
+      b.totalProfit += profit;
       return b;
     }));
   }
 
   private updateCapital(businesses: Business[]): void {
     const totalIncome = businesses.reduce((previous, current) => {
-      if (current.loan) {
+      if (current.loan?.payments?.length) {
         return previous + ((current.cashFlow / 12) - current.loan?.payments[0].totalPayment)
       }
       return previous + (current.cashFlow / 12)

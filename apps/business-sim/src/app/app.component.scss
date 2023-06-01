@@ -6,13 +6,14 @@
 }
 .business-container {
   display: flex;
-  flex-direction: column;
+  flex-flow: row wrap;
   order: 2;
-  width: 500px;
+  width: 50%;
+  justify-content: space-evenly;
   overflow: auto;
-  > * {
-    margin-bottom: 2rem;
-  }
+  min-height: 0;
+  gap: 2rem;
+  padding: 0.5rem;
 }
 
 .dashboard {

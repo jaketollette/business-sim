@@ -1,5 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Subject } from 'rxjs';
 import { Business } from '../interfaces/business.interface';
+import { NewLoanDialogComponent } from '../loan/components/new-loan-dialog/new-loan-dialog.component';
 import { TransactionStore } from '../store/transaction.store';
 
 @Component({
@@ -8,21 +11,27 @@ import { TransactionStore } from '../store/transaction.store';
   styleUrls: ['business.component.scss']
 })
 
-export class BusinessComponent implements OnInit {
+export class BusinessComponent implements OnInit, OnDestroy {
   @Input() business!: Business;
 
-  showLoanOptions = false;
-  neededCapital = 0;
   currentCapital = 0;
-  downPayment = 0;
-  loanAmount = 0;
 
-  constructor(private readonly store: TransactionStore) { }
+  private destroy$: Subject<void> = new Subject<void>();
+
+  constructor(
+    private readonly store: TransactionStore,
+    private readonly dialog: DialogService,
+  ) { }
 
   ngOnInit(): void {
     this.store.capital$.subscribe(capital => {
       this.currentCapital = capital;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   public totalPrice(): number {
@@ -42,23 +51,16 @@ export class BusinessComponent implements OnInit {
     if (this.currentCapital >= this.totalPrice()) {
       this.store.buyBusiness(this.business);
     } else {
-      this.showLoanOptions = true;
-      this.neededCapital = Math.abs(this.currentCapital - this.totalPrice());
-      this.loanAmount = this.totalPrice();
-      this.downPayment = this.loanAmount * 0.1;
+      this.dialog.open(NewLoanDialogComponent, {
+        header: 'Loan Options',
+        draggable: true,
+        resizable: true,
+        data: {
+          business: this.business,
+          currentCapital: this.currentCapital,
+          totalAmount: this.totalPrice()
+        }
+      });
     }
-  }
-
-  public close(): void {
-    this.showLoanOptions = false;
-  }
-
-  public takeLoan(): void {
-    this.store.getLoan({
-      amount: this.loanAmount,
-      downPayment: this.downPayment,
-      business: this.business
-    });
-    this.showLoanOptions = false;
   }
 }

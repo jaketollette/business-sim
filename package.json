@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start:dev": "nx run business-sim:serve:development"
+    "start:dev": "nx run business-sim:serve:development",
+    "start:api:dev": "nx run business-sim-api:serve:development"
   },
   "private": true,
   "dependencies": {
@@ -29,6 +30,9 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "primeflex": "^3.3.0",
+    "primeicons": "^6.0.1",
+    "primeng": "^15.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "sqlite3": "^5.1.6",

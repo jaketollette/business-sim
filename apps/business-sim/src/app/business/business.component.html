@@ -1,45 +1,25 @@
 <div>
-  <header>{{ business.name }}</header>
   <ng-container>
-    <div>
-      <span><strong>Location</strong>: {{ business.location }}</span>
-      <span><strong>Price</strong>: {{ business.price | currency }}</span>
-      <span><strong>Cashflow</strong>: {{ business.cashFlow | currency }}</span>
-      <span><strong>Revenue</strong>: {{ business.revenue | currency }}</span>
-      <span><strong>Rent</strong>: {{ business.rent | currency }}</span>
-    </div>
+    <p-card [header]="business.name | titlecase" [subheader]="business.location | titlecase">
+      <div>
+        <span><strong>Price</strong>: {{ business.price | currency }}</span>
+        <span><strong>Cashflow</strong>: {{ business.cashFlow | currency }}</span>
+        <span><strong>Revenue</strong>: {{ business.revenue | currency }}</span>
+        <span><strong>Rent</strong>: {{ business.rent | currency }}</span>
+      </div>
 
-    <div>
-      <span><strong>EBITDA</strong>: {{ business.ebitda | currency }}</span>
-      <span><strong>FFE</strong>: {{ business.ffe.value | currency }} {{ business.ffe.included ? '': '*'}}</span>
-      <span><strong>Inventory</strong>: {{ business.inventory.value | currency }} {{ business.inventory.included ? '':
-        '*'}}</span>
-      <span><strong>Employees</strong>: {{ business.employees | number }}</span>
-      <span><strong>Established</strong>: {{ business.established | number }}</span>
-    </div>
-
-    <div>
-      <button type="button" (click)="buy()">Buy ({{ this.totalPrice() | currency }})</button>
-    </div>
+      <div>
+        <span><strong>EBITDA</strong>: {{ business.ebitda | currency }}</span>
+        <span><strong>FFE</strong>: {{ business.ffe.value | currency }} {{ business.ffe.included ? '': '*'}}</span>
+        <span><strong>Inventory</strong>: {{ business.inventory.value | currency }} {{ business.inventory.included ? '':
+          '*'}}</span>
+        <span><strong>Employees</strong>: {{ business.employees | number }}</span>
+        <span><strong>Established</strong>: {{ business.established | number }}</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <p-button type="button" (click)="buy()" label="Buy ({{ this.totalPrice() | currency }})"
+          styleClass="p-button-success"></p-button>
+      </ng-template>
+    </p-card>
   </ng-container>
 </div>
-
-<ng-container *ngIf="showLoanOptions">
-  <div class="loan-dialog">
-    <h2>Loan options</h2>
-    <p>Unfortunately, you don't have enough capital.</p>
-    <ng-container *ngIf="neededCapital < 5000000">
-      <p>To complete this transaction without a loan, you'll need an additional {{ neededCapital | currency }}</p>
-      <p>To finance this transaction, you'll need to put down {{ downPayment | currency }} for a loan of {{ loanAmount |
-        currency }}</p>
-      <p *ngIf="currentCapital >= downPayment">Would you like to take out a loan?</p>
-      <p *ngIf="currentCapital < downPayment">You need an additional {{ downPayment - currentCapital | currency }} for a
-        down payment</p>
-    </ng-container>
-
-    <div class="options">
-      <button (click)="close()">Close</button>
-      <button (click)="takeLoan()" *ngIf="currentCapital >= downPayment && neededCapital < 5000000">Take loan</button>
-    </div>
-  </div>
-</ng-container>

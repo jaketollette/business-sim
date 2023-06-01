@@ -3,70 +3,64 @@
     <business-sim-business *ngFor="let business of businesses" [business]="business"></business-sim-business>
   </div>
   <div class="assets">
-    <div class="turn">
-      <button (click)="advance()">Next month</button>
-      <button (click)="advance(3)">Next quarter</button>
-      <button (click)="advance(6)">6 months</button>
-      <button (click)="advance(12)">1 year</button>
-      <button (click)="advance(60)">5 years</button>
-      <span style="padding-left: 2rem;">Current Turn: {{ turn }}(months) {{ turn / 12 | number}} (years)</span>
-      <span style="padding-left: 2rem;">Monthly Income: {{ monthlyIncome | currency }}</span>
-      <span style="padding-left: 2rem;">Yearly Income: {{ annualIncome | currency }}</span>
-      <span style="padding-left: 2rem;">Owned: {{ ownedBusinesses.length | number }}</span>
-      <span style="padding-left: 2rem;">Age: {{ (16 + (turn / 12)) | number }}</span>
-    </div>
-    <ng-container *ngIf="capital$ | async as capital; else nocapital">
-      <h3>Capital: {{ capital | currency }}</h3>
-    </ng-container>
+    <p-panel header="Capital: {{ capital | currency }}" [style]="{ width: '100%', marginBottom: '2rem'}">
+      <div class="flex flex-column gap-3">
+        <div class="card flex flex-wrap gap-3">
+          <span>{{ turn / 12 | number: '1.0-1' }} (years) {{ turn }} (months)</span>
+          <span>Monthly Income: {{ monthlyIncome | currency }}</span>
+          <span>Yearly Income: {{ annualIncome | currency }}</span>
+          <span>Owned: {{ ownedBusinesses.length | number: '1.0-0' }}</span>
+          <span>Managers: {{ managers | number: '1.0-0' }}</span>
+          <span>Age: {{ (40 + (turn / 12)) | number: '1.0-0' }}</span>
+        </div>
+        <div class="card flex flex-wrap gap-3 justify-content-between">
+          <p-button label="Next Month" (onClick)="advance()"></p-button>
+          <p-button styleClass="p-button-secondary" label="Next Quarter" (onClick)="advance(3)"></p-button>
+          <p-button styleClass="p-button-secondary" label="6 Months" (onClick)="advance(6)"></p-button>
+          <p-button styleClass="p-button-secondary" label="1 Year" (onClick)="advance(12)"></p-button>
+          <p-button styleClass="p-button-secondary" label="5 Years" (onClick)="advance(60)"></p-button>
+          <p-button *ngIf="capital > 100000" styleClass="p-button-success" label="Hire Manager"
+            (onClick)="hireManager()"></p-button>
+        </div>
+      </div>
+    </p-panel>
+
     <ng-container *ngIf="ownedBusinesses as owned">
       <ng-container *ngIf="owned?.length; else nobusinesses">
-        <div class="business" *ngFor="let business of owned">
-          <div>
-            <h3>Business</h3>
-            <strong>Name: </strong><span>{{ business.name | titlecase }}</span><br>
-            <strong>Annual Cashflow: </strong><span>{{ calculateCashflow(business, true) | currency }}</span><br>
-            <strong>Monthly Cashflow: </strong><span>{{ calculateCashflow(business) | currency }}</span><br>
-            <strong *ngIf="!business.loan" (click)="sell(business)">Sell for {{ business.cashFlow * 2.25 | currency
-              }}</strong>
-          </div>
-          <ng-container *ngIf="business.loan">
-            <div>
-              <h3>Loan
-                <span (click)="loanPayoff(business.loan)"
-                  *ngIf="business.loan.payments[0].principalRemaining + business.loan.payments[0].interestPayment < capital"
-                  title="{{business.loan.payments[0].principalRemaining + business.loan.payments[0].interestPayment | currency }}">
-                  [Payoff] - {{ business.loan.payments[0].principalRemaining + business.loan.payments[0].interestPayment
-                  | currency }}
-                </span>
-              </h3>
-              <strong>Payment:</strong> {{ business.loan.payments[0].totalPayment | currency }}<br>
-              <strong>Principal:</strong> {{ business.loan.payments[0].principalRemaining | currency }}<br>
-              <strong>Interest Paid:</strong> {{ business.loan.payments[0].interestCumulative | currency }}<br>
-              <strong>Payments Left:</strong> {{ business.loan.payments.length | number }}
-              <table>
-                <caption><strong>Schedule</strong></caption>
-                <thead>
-                  <tr>
-                    <th>Payment #</th>
-                    <th>Paid to Interest</th>
-                    <th>Paid to Principal</th>
-                    <th>Current Balance</th>
-                    <th>Total Interest</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let payment of business.loan.payments">
-                    <td>{{ payment.id }}</td>
-                    <td>{{ payment.interestPayment | currency }}</td>
-                    <td>{{ payment.principalPayment | currency }}</td>
-                    <td>{{ payment.principalRemaining | currency }}</td>
-                    <td>{{ payment.interestCumulative | currency }}</td>
-                  </tr>
-                </tbody>
-              </table>
+        <p-panel *ngFor="let business of owned" [header]="business.name | titlecase" [toggleable]="true"
+          [style]="{marginBottom: '1rem'}" [collapsed]="false">
+          <div class="flex justify-content-between">
+            <ul class="p-0 list-none">
+              <li><strong>Purchase Price</strong>: {{ business.price | currency }}</li>
+              <li><strong>Annual Cashflow</strong>: {{ calculateCashflow(business, true) | currency }}</li>
+              <li><strong>Monthly Cashflow</strong>: {{ calculateCashflow(business) | currency }}</li>
+              <li><strong>Months Owned</strong>: {{ business.monthsOwned | number: '1.0-0'}}</li>
+              <li><strong>Profit ~ </strong>: {{ business.totalProfit | currency }}</li>
+            </ul>
+            <div *ngIf="business.loan && business.loan.payments.length">
+              <p-fieldset legend="Loan">
+                <ul class="p-0 list-none">
+                  <li><strong>Payment:</strong> {{ business.loan.payments[0].totalPayment | currency }}</li>
+                  <li><strong>Principal:</strong> {{ business.loan.payments[0].principalRemaining | currency }}</li>
+                  <li><strong>Interest Paid:</strong> {{ business.loan.payments[0].interestCumulative | currency }}</li>
+                  <li><strong>Payments Left:</strong> {{ business.loan.payments.length | number }}</li>
+                </ul>
+              </p-fieldset>
             </div>
-          </ng-container>
-        </div>
+          </div>
+          <ng-template pTemplate="footer">
+            <div class="flex gap-3">
+              <p-button *ngIf="!business.loan" (onClick)="sell(business)" label="Sell"
+                styleClass="p-button-success"></p-button>
+              <p-button *ngIf="business.loan" label="View Loan Schedule" styleClass="p-button-info"
+                (onClick)="viewSchedule(business)"></p-button>
+              <p-button label="Pay off loan"
+                *ngIf="business.loan && business.loan.payments[0] && business.loan.payments[0].principalRemaining + business.loan.payments[0].interestPayment < capital"
+                (click)="loanPayoff(business.loan)" styleClass="p-button-warning">
+              </p-button>
+            </div>
+          </ng-template>
+        </p-panel>
       </ng-container>
     </ng-container>
     <ng-template #nobusinesses>
@@ -77,3 +71,4 @@
     </ng-template>
   </div>
 </div>
+<p-confirmDialog [style]="{width: '25rem'}"></p-confirmDialog>

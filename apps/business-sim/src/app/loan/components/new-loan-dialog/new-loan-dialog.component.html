@@ -1,0 +1,16 @@
+<p>Unfortunately, you don't have enough capital.</p>
+<ng-container *ngIf="loanEligable">
+  <p>To complete this transaction without a loan, you'll need an additional {{ neededCapital | currency }}</p>
+  <p>To finance this transaction, you'll need to put down {{ downPayment | currency }} for a loan of <strong>
+      {{ loanAmount | currency }}
+    </strong></p>
+  <p *ngIf="currentCapital >= downPayment">Would you like to take out a loan?</p>
+  <p *ngIf="currentCapital < downPayment">You need an additional <strong>{{ downPayment - currentCapital | currency
+      }}</strong> for a
+    down payment</p>
+</ng-container>
+
+<div class="flex justify-content-end gap-3">
+  <p-button (click)="close()" styleClass="p-button-secondary">Close</p-button>
+  <p-button (click)="accept()" *ngIf="canAccept">Take loan</p-button>
+</div>

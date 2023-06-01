@@ -1,0 +1,20 @@
+<p-table [value]="loan.payments">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Payment #</th>
+      <th>Paid to Interest</th>
+      <th>Paid to Principal</th>
+      <th>Current Balance</th>
+      <th>Total Interest</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-payment>
+    <tr>
+      <td>{{ payment.id }}</td>
+      <td>{{ payment.interestPayment | currency }}</td>
+      <td>{{ payment.principalPayment | currency }}</td>
+      <td>{{ payment.principalRemaining | currency }}</td>
+      <td>{{ payment.interestCumulative | currency }}</td>
+    </tr>
+  </ng-template>
+</p-table>
